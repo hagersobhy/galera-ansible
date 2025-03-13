@@ -108,3 +108,38 @@ Expected output: wsrep_cluster_size: 3.
   ``` sudo mysql -u root -p -e "SHOW DATABASES;" ```
 --- 
 
+## 📌 Setup Instructions (Automatic Method on Ubuntu)
+- **structure of the Ansible project:**
+```
+📂 galera-ansible/
+ ├── inventory**
+ ├── ansible.cfg
+ ├── galera_setup.yml
+ ├── roles/
+ │   ├── common/
+ │   │   ├── tasks/main.yml
+ │   │ 
+ │   ├── firewall/
+ │   │   ├── tasks/main.yml
+ │   ├── mariadb/
+ │   │   ├── tasks/main.yml
+ │   │   ├── templates/galera.cnf.j2
+ ├── README.md
+```
+- **After you make this file and apply 3 role, you can run the Playbook:**
+```
+ansible-playbook galera_setup.yml
+```
+- **Verify the Setup**
+```
+mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size';"
+mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_%';"
+ ```
+---
+## Publish to Ansible Galaxy (Optional)
+### If you want to publish your roles to Ansible Galaxy, follow these steps:
+- Create a meta/main.yml file in each role to define metadata (e.g., author, license, description).
+- Push your roles to GitHub.
+- Import to Ansible Galaxy:
+- Go to Ansible Galaxy.
+- Log in and click Add Content > Import Role from GitHub: Follow the prompts to import your roles.
