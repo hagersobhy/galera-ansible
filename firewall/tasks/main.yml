@@ -1,0 +1,53 @@
+---
+# tasks file for firewall
+- name: Enable UFW (Ubuntu/Debian)
+  ufw:
+    state: enabled
+  when: ansible_os_family == "Debian"
+
+- name: Allow required ports (Ubuntu/Debian)
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - 3306
+    - 4567
+    - 4568
+    - 4444
+  when: ansible_os_family == "Debian"
+
+- name: Reload UFW (Ubuntu/Debian)
+  ufw:
+    state: reloaded
+  when: ansible_os_family == "Debian"
+
+- name: Ensure firewalld is installed (CentOS/RHEL)
+  yum:
+    name: firewalld
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Start and enable firewalld (CentOS/RHEL)
+  systemd:
+    name: firewalld
+    state: started
+    enabled: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Allow required ports (CentOS/RHEL)
+  firewalld:
+    port: "{{ item }}/tcp"
+    permanent: yes
+    state: enabled
+  loop:
+    - 3306
+    - 4567
+    - 4568
+    - 4444
+  when: ansible_os_family == "RedHat"
+
+- name: Reload firewalld (CentOS/RHEL)
+  firewalld:
+    state: reloaded
+  when: ansible_os_family == "RedHat"

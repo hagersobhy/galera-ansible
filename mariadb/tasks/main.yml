@@ -1,0 +1,52 @@
+---
+# tasks file for mariadb
+- name: Install MariaDB and Galera (Ubuntu/Debian)
+  apt:
+    name:
+      - mariadb-server
+      - galera-4
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install MariaDB and Galera (CentOS/RHEL)
+  yum:
+    name:
+      - mariadb-server
+      - galera-4
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Configure Galera (Ubuntu/Debian)
+  template:
+    src: galera.cnf.j2
+    dest: /etc/mysql/mariadb.conf.d/50-server.cnf
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_os_family == "Debian"
+
+- name: Configure Galera (CentOS/RHEL)
+  template:
+    src: galera.cnf.j2
+    dest: /etc/my.cnf.d/galera.cnf
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_os_family == "RedHat"
+
+- name: Stop MariaDB service
+  systemd:
+    name: mariadb
+    state: stopped
+  when: inventory_hostname == "galera-node1"
+
+- name: Bootstrap the cluster (on the first node)
+  shell: |
+    galera_new_cluster
+  when: inventory_hostname == "galera-node1"
+
+- name: Start MariaDB service (on other nodes)
+  systemd:
+    name: mariadb
+    state: started
+  when: inventory_hostname != "galera-node1"

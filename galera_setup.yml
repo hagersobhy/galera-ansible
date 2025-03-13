@@ -1,0 +1,8 @@
+---
+- name: Setup Galera HA Cluster
+  hosts: galera
+  become: yes
+  roles:
+    - common
+    - firewall
+    - mariadb

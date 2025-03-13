@@ -1,0 +1,47 @@
+---
+# tasks file for common
+- name: Ensure system is up-to-date (Ubuntu/Debian)
+  apt:
+    update_cache: yes
+    upgrade: dist
+    cache_valid_time: 3600
+  when: ansible_os_family == "Debian"
+
+- name: Ensure system is up-to-date (CentOS/RHEL)
+  yum:
+    name: "*"
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: Add nodes to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item.ip }} {{ item.hostname }}"
+  loop:
+    - { ip: "192.168.254.101", hostname: "galera-node1" }
+    - { ip: "192.168.254.102", hostname: "galera-node2" }
+    - { ip: "192.168.254.103", hostname: "galera-node3" }
+
+- name: Fix DNS resolution (Ubuntu/Debian)
+  block:
+    - name: Restart systemd-resolved
+      systemd:
+        name: systemd-resolved
+        state: restarted
+
+    - name: Add Google DNS to resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver 8.8.8.8"
+        create: yes
+
+    - name: Add secondary Google DNS
+      lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver 8.8.4.4"
+        create: yes
+
+- name: Ensure SSH keys are copied
+  authorized_key:
+    user: "hager"
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

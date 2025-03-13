@@ -1,0 +1,9 @@
+[galera]
+galera-node1 ansible_host=192.168.254.101
+galera-node2 ansible_host=192.168.254.102
+galera-node3 ansible_host=192.168.254.103
+
+[galera:vars]
+ansible_user=hager
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+ansible_become=yes
