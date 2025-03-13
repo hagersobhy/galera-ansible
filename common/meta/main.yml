@@ -1,6 +1,6 @@
 galaxy_info:
   author: Hager Sobhy
-  description: this role install mariadb
+  description: this role install check the system and and ssh previlage
   company: your company (optional)
 
   # If the issue tracker for your role is not on github, uncomment the
