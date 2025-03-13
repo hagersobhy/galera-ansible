@@ -21,7 +21,8 @@
     - { ip: "192.168.254.101", hostname: "galera-node1" }
     - { ip: "192.168.254.102", hostname: "galera-node2" }
     - { ip: "192.168.254.103", hostname: "galera-node3" }
-
+  when: inventory_hostname == item.hostname
+  
 - name: Fix DNS resolution (Ubuntu/Debian)
   block:
     - name: Restart systemd-resolved
